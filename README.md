@@ -10,16 +10,16 @@ OpenVecto 是一个开源的Java库，旨在为开发者提供一个简单而强
  **性能优化：** 针对各种向量操作进行了深度优化，确保高效的数据检索和处理能力。
  **社区驱动：** 作为一个活跃的开源项目，OpenVecto欢迎所有贡献者加入，共同推动技术进步。
 ### 快速开始：
-
-安装OpenVecto非常简单，只需将依赖添加到您的pom.xml文件中（如果使用Maven）：
-
+**构建face-dlib，需要：**
+```1、构建动态库文件
+$ cd jdlib/jni
+$ mkdir build
+$ cd build
+$ cmake ..
+$ make 
+2、打包 face-dlib项目```
 ```
-<dependency>
-    <groupId>com.openvecto</groupId>
-    <artifactId>openvecto-core</artifactId>
-    <version>1.0.0</version>
-</dependency>
-```
+
 ### 加入我们：
 
 访问 OpenVecto GitHub 获取更多信息，参与讨论，或者直接提交Pull Request帮助改进项目。
