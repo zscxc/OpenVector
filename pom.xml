@@ -5,7 +5,7 @@
     <groupId>com.openvector</groupId>
     <artifactId>open-vector-model</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>OpenVecto</name>
+    <name>OpenVector</name>
     <description>OpenVector</description>
     <packaging>pom</packaging>
 
