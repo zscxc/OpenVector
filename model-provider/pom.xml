@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.openvector</groupId>
-        <artifactId>embedding-model-parent</artifactId>
+        <artifactId>openvector-parent</artifactId>
         <version>${revision}</version>
         <relativePath>../model-parent/pom.xml</relativePath>
     </parent>

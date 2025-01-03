@@ -2,7 +2,7 @@
 
 
 
-### model-parent
+### openvector-parent
 
 统一版本，发布中央仓库
 
