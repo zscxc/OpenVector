@@ -13,6 +13,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 
@@ -56,6 +57,10 @@ public class FaceDlibModelAdapter implements ModelProvider {
             }
 
             throw new DataProcessingException("No face detected in the image");
+        } catch (MalformedURLException e) {
+            throw new DataProcessingException("Invalid URL provided", e);
+        } catch (IOException e) {
+            throw new DataProcessingException("Failed to load image", e);
         } catch (Exception e) {
             throw new DataProcessingException("Face embedding processing failed", e);
         }
