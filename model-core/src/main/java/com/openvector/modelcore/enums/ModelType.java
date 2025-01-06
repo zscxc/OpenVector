@@ -7,7 +7,8 @@ public enum ModelType {
 
     OPENAI_EMBEDDING("OpenAI"),
     BERT_BASE("BERT"),
-    CUSTOM("Custom");
+    CUSTOM("Custom"),
+    FACE_EMBEDDING("人脸嵌入");  // 新增人脸嵌入类型;
 
     private final String description;
 

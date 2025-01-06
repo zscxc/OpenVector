@@ -10,6 +10,13 @@
         <version>${revision}</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
+    <dependencies>
+        <dependency>
+            <groupId>com.openvector</groupId>
+            <artifactId>membedding-model-core</artifactId>
+            <version>${revision}</version>
+        </dependency>
+    </dependencies>
     <build>
         <resources>
             <resource>
