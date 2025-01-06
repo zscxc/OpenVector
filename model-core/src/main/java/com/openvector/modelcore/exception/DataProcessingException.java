@@ -1,6 +1,8 @@
 package com.openvector.modelcore.exception;
 
 /**
+ * 数据处理通用异常
+ *
  * @author cxc
  */
 public class DataProcessingException extends Exception {
