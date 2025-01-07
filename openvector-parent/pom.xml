@@ -192,7 +192,7 @@
     <modules>
         <module>../model-core</module>
         <module>../model-provider</module>
-<!--        <module>../milvus-plus-boot-starter</module>-->
+        <module>../vector-db</module>
     </modules>
 
 
