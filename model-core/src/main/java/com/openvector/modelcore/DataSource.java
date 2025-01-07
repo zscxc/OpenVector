@@ -29,6 +29,10 @@ public class DataSource {
      */
     private String content;
 
+    public DataSource(String valueString) {
+
+    }
+
     /**
      * 数据源类型枚举
      */
