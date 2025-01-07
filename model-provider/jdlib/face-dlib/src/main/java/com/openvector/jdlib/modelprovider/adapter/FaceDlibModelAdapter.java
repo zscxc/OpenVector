@@ -1,6 +1,6 @@
 package com.openvector.jdlib.modelprovider.adapter;
 
-import com.openvector.jdlib.Jdlib;
+import com.openvector.jdlib.face.FaceDlibUtil;
 import com.openvector.jdlib.utils.FaceDescriptor;
 import com.openvector.modelcore.DataSource;
 import com.openvector.modelcore.enums.DataType;
@@ -15,7 +15,9 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.List;
 
 
 /**
@@ -23,11 +25,6 @@ import java.util.*;
  */
 public class FaceDlibModelAdapter implements ModelProvider {
 
-    private final Jdlib jdlib;
-
-    public FaceDlibModelAdapter(String facialLandmarksModelPath) {
-        this.jdlib = new Jdlib(facialLandmarksModelPath);
-    }
 
     @Override
     public boolean supports(ModelType modelType, DataType dataType) {
@@ -40,7 +37,7 @@ public class FaceDlibModelAdapter implements ModelProvider {
         try {
             BufferedImage image = loadImage(source);
 
-            List<FaceDescriptor> faceEmbeddings = jdlib.getFaceEmbeddings(image);
+            List<FaceDescriptor> faceEmbeddings = FaceDlibUtil.getFaceEmbedding(image);
 
             if (!faceEmbeddings.isEmpty()) {
                 FaceDescriptor firstFace = faceEmbeddings.get(0);
