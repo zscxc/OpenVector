@@ -15,6 +15,7 @@
     <description>vector-db</description>
     <modules>
         <module>VectoRex</module>
+        <module>DbMilvusPlus</module>
     </modules>
 
 </project>
