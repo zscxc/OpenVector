@@ -8,13 +8,14 @@
         <version>${revision}</version>
         <relativePath>../openvector-parent/pom.xml</relativePath>
     </parent>
-    <artifactId>embedding-model-provider</artifactId>
+    <artifactId>openvector-db</artifactId>
     <packaging>pom</packaging>
     <version>${revision}</version>
-    <name>embedding-model-provider</name>
-    <description>embedding-model-provider</description>
+    <name>openvector-db</name>
+    <description>openvector-db</description>
     <modules>
-        <module>jdlib/face-dlib</module>
+        <module>openvector-db-milvus-plus</module>
+        <module>openvector-vectorex</module>
     </modules>
 
 </project>

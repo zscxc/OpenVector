@@ -190,9 +190,9 @@
         </build>
 
     <modules>
-        <module>../model-core</module>
-        <module>../model-provider</module>
-        <module>../vector-db</module>
+        <module>../openvector-core</module>
+        <module>../openvector-provider</module>
+        <module>../openvector-db</module>
     </modules>
 
 

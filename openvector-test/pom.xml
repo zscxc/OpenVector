@@ -5,8 +5,8 @@
     <groupId>com.openvector</groupId>
     <artifactId>model-test</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>model-test</name>
-    <description>model-test</description>
+    <name>openvector-test</name>
+    <description>openvector-test</description>
     <properties>
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -16,7 +16,7 @@
     <dependencies>
         <dependency>
             <groupId>com.openvector.jdlib</groupId>
-            <artifactId>face</artifactId>
+            <artifactId>openvector-face</artifactId>
             <version>1.0.0</version>
         </dependency>
         <dependency>

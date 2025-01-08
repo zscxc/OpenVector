@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.openvector</groupId>
+    <artifactId>embedding-model-parent</artifactId>
+    <version>1.0.0</version>
+    <relativePath>../model-parent/pom.xml</relativePath>
+  </parent>
+  <groupId>com.openvector</groupId>
+  <artifactId>embedding-model-provider</artifactId>
+  <version>1.0.0</version>
+  <packaging>pom</packaging>
+  <name>embedding-model-provider</name>
+  <description>embedding-model-provider</description>
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  <modules>
+    <module>jdlib/face-dlib</module>
+  </modules>
+</project>

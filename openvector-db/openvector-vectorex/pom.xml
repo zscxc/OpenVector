@@ -8,13 +8,13 @@
         <version>${revision}</version>
         <relativePath>../../openvector-parent/pom.xml</relativePath>
     </parent>
-    <artifactId>db-vectorex</artifactId>
+    <artifactId>openvector-vectorex</artifactId>
     <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
             <groupId>com.openvector</groupId>
-            <artifactId>membedding-model-core</artifactId>
+            <artifactId>openvector-core</artifactId>
             <version>${revision}</version>
         </dependency>
         <dependency>

@@ -8,14 +8,13 @@
         <version>${revision}</version>
         <relativePath>../openvector-parent/pom.xml</relativePath>
     </parent>
-    <artifactId>vector-db</artifactId>
+    <artifactId>openvector-provider</artifactId>
     <packaging>pom</packaging>
     <version>${revision}</version>
-    <name>vector-db</name>
-    <description>vector-db</description>
+    <name>openvector-provider</name>
+    <description>openvector-provider</description>
     <modules>
-        <module>VectoRex</module>
-        <module>DbMilvusPlus</module>
+        <module>jdlib/openvector-face</module>
     </modules>
 
 </project>

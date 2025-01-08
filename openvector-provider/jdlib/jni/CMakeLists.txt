@@ -70,4 +70,4 @@ endif()
 
 # 设置 Jdlib 动态库的输出目录
 set_target_properties(Jdlib PROPERTIES
-        LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../face-dlib/src/main/resources/native/${NATIVE_DIR}/${ARCH_DIR})
+        LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../openvector-face/src/main/resources/native/${NATIVE_DIR}/${ARCH_DIR})

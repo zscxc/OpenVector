@@ -6,35 +6,35 @@
         <groupId>com.openvector</groupId>
         <artifactId>openvector-parent</artifactId>
         <version>${revision}</version>
-        <relativePath>../../openvector-parent/pom.xml</relativePath>
+        <relativePath>../openvector-parent/pom.xml</relativePath>
     </parent>
-
-    <artifactId>db-milvus-plus</artifactId>
+    <artifactId>openvector-core</artifactId>
     <packaging>jar</packaging>
-
     <dependencies>
-        <dependency>
-            <groupId>org.dromara.milvus-plus</groupId>
-            <artifactId>milvus-plus-boot-starter</artifactId>
-            <version>2.2.4-M1</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.openvector</groupId>
-            <artifactId>membedding-model-core</artifactId>
-            <version>${revision}</version>
-        </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java</artifactId>
+            <version>3.24.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.22</version>
+        </dependency>
 
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
+            <groupId>net.dreamlu</groupId>
+            <artifactId>mica-auto</artifactId>
+            <version>${mica-auto.vaersion}</version>
+            <scope>provided</scope>
         </dependency>
+
     </dependencies>
 
+
 </project>
+
