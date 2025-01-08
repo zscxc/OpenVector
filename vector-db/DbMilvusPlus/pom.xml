@@ -15,7 +15,7 @@
     <dependencies>
         <dependency>
             <groupId>org.dromara.milvus-plus</groupId>
-            <artifactId>milvus-plus-core</artifactId>
+            <artifactId>milvus-plus-boot-starter</artifactId>
             <version>2.2.4-M1</version>
         </dependency>
 
