@@ -50,6 +50,7 @@ $ make
 ```
 
 ```xml
+<!-- 暂未上传至 maven ，提供本地依赖示例 -->
 <dependency>
     <groupId>com.openvector</groupId>
     <artifactId>openvector-core</artifactId>
