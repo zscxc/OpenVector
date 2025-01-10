@@ -73,6 +73,21 @@
                     <type>pom</type>
                     <scope>import</scope>
                 </dependency>
+                <dependency>
+                    <groupId>com.openvector</groupId>
+                    <artifactId>openvector-core</artifactId>
+                    <version>${revision}</version>
+                </dependency>
+                <dependency>
+                    <groupId>com.openvector</groupId>
+                    <artifactId>openvector-db</artifactId>
+                    <version>${revision}</version>
+                </dependency>
+                <dependency>
+                    <groupId>com.openvector</groupId>
+                    <artifactId>openvector-provider</artifactId>
+                    <version>${revision}</version>
+                </dependency>
             </dependencies>
         </dependencyManagement>
 
