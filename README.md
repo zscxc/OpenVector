@@ -38,9 +38,20 @@
 
 ### 安装依赖
 
+```shell
+1、构建动态库文件
+$ cd jdlib/jni
+$ mkdir build
+$ cd build
+$ cmake ..
+$ make 
+2、打包 face-dlib项目
+2、打包 face-dlib项目
+```
+
 ```xml
 <dependency>
-    <groupId>io.openvector</groupId>
+    <groupId>com.openvector</groupId>
     <artifactId>openvector-core</artifactId>
     <version>1.0.0</version>
 </dependency>
