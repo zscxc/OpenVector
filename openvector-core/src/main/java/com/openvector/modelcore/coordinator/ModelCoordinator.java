@@ -26,7 +26,7 @@ public class ModelCoordinator implements VectorizeData {
 
         // 找到支持特定模型和数据类型的提供者
         ModelProvider selectedProvider = StreamSupport.stream(loader.spliterator(), false)
-            .filter(provider -> provider.supports(modelType, detectDataType(source)))
+            .filter(provider -> provider.supports(modelType, source.getDataType()))
             .findFirst()
             .orElseThrow(() -> new DataProcessingException("No suitable model provider found"));
 
@@ -34,14 +34,16 @@ public class ModelCoordinator implements VectorizeData {
         return selectedProvider.process(source);
     }
 
-    /**
-     * 检测数据源的类型
-     * @param source 数据源
-     * @return 数据类型
-     */
-    private DataType detectDataType(DataSource source) {
-        // 实现数据类型检测逻辑
-        // 可以根据文件扩展名、内容等进行推断
-        return DataType.TEXT; // 示例默认返回文本类型
-    }
+
+//移除这个方法，因为已经在 DataSource 中实现了类型检测
+//    /**
+//     * 检测数据源的类型
+//     * @param source 数据源
+//     * @return 数据类型
+//     */
+//    private DataType detectDataType(DataSource source) {
+//        // 实现数据类型检测逻辑
+//        // 可以根据文件扩展名、内容等进行推断
+//        return DataType.TEXT; // 示例默认返回文本类型
+//    }
 }
