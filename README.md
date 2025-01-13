@@ -97,3 +97,7 @@ public List<Float> embedText(String text) {
 ## 赞助与支持
 
 如果你觉得这个项目对你有帮助，欢迎 Star ⭐ 本项目！
+
+## 友情连接
+- [VectoRex](https://gitee.com/giteeClass/VectoRex)
+- [MilvusPlus](https://gitee.com/dromara/MilvusPlus)
