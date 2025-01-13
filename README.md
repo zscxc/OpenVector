@@ -92,6 +92,8 @@ public List<Float> embedText(String text) {
 
 ## 支持与联系
 
+- GitHub 主页: [https://github.com/zscxc/OpenVector](https://github.com/zscxc/OpenVector)
+- Gitee 主页: [https://gitee.com/cencxc/open-vector](https://gitee.com/cencxc/open-vector)
 - GitHub Issues: [提交问题](https://gitee.com/cencxc/open-vector/issues)
 - 邮箱: 320522275@qq.com
 
