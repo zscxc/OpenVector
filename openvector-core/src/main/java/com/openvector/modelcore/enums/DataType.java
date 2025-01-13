@@ -1,8 +1,11 @@
 package com.openvector.modelcore.enums;
 
+import lombok.Getter;
+
 /**
  * @author cxc
  */
+@Getter
 public enum DataType {
     TEXT("文本"),
     IMAGE("图片"),
@@ -16,7 +19,4 @@ public enum DataType {
         this.description = description;
     }
 
-    public String getDescription() {
-        return description;
-    }
 }

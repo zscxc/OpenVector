@@ -1,7 +1,7 @@
 package com.openvector.dbvectorex.annotation;
 
+import com.openvector.modelcore.enums.DataType;
 import com.openvector.modelcore.enums.ModelType;
-import io.github.javpower.vectorexcore.entity.DataType;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -19,6 +19,11 @@ public @interface GenerationVector {
      * 要转换的字段
      */
     String to_name() default "";
+
+    /**
+     * 数据类型
+     */
+    DataType dataType() default DataType.TEXT;
 
     /**
      * 数据类型，默认为 FLOAT_VECTOR

@@ -4,6 +4,7 @@ import com.openvector.dbvectorex.annotation.GenerationVector;
 import com.openvector.dbvectorex.wrapper.OpenVectorWrapper;
 import com.openvector.modelcore.DataSource;
 import com.openvector.modelcore.coordinator.ModelCoordinator;
+import com.openvector.modelcore.enums.DataType;
 import io.github.javpower.vectorexbootstater.core.VectoRexResult;
 import io.github.javpower.vectorexbootstater.mapper.BaseVectoRexMapper;
 import io.github.javpower.vectorexbootstater.util.VectorRexSpringUtils;
@@ -196,8 +197,19 @@ public class OpenVectorService<T>  {
      */
     private List<Float> generateEmbedding(Object sourceValue, GenerationVector annotation) {
         try {
+            DataSource dataSource;
+            if (sourceValue == null) {
+                throw new IllegalArgumentException("Source value cannot be null");
+            }
+            // 使用注解中指定的数据类型创建 DataSource
+            dataSource = new DataSource(sourceValue.toString()) {
+                @Override
+                public DataType getDataType() {
+                    return annotation.dataType();
+                }
+            };
             return modelCoordinator.vectorize(
-                new DataSource(sourceValue.toString()),
+                dataSource,
                 annotation.modelType()
             );
         } catch (Exception e) {

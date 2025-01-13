@@ -3,6 +3,7 @@ package com.openvector.dbmilvusplus.handler;
 import com.openvector.dbmilvusplus.annotaion.GenerationVector;
 import com.openvector.modelcore.DataSource;
 import com.openvector.modelcore.coordinator.ModelCoordinator;
+import com.openvector.modelcore.enums.DataType;
 import com.openvector.modelcore.exception.DataProcessingException;
 import io.milvus.v2.service.vector.response.DeleteResp;
 import io.milvus.v2.service.vector.response.InsertResp;
@@ -201,12 +202,24 @@ public class MilvusPlusService<T> {
      */
     private List<Float> generateEmbedding(Object sourceValue, GenerationVector annotation) throws DataProcessingException {
         try {
+            DataSource dataSource;
+            if (sourceValue == null) {
+                throw new IllegalArgumentException("Source value cannot be null");
+            }
+            // 使用注解中指定的数据类型创建 DataSource
+            dataSource = new DataSource(sourceValue.toString()) {
+                @Override
+                public DataType getDataType() {
+                    return annotation.dataType();
+                }
+            };
             return modelCoordinator.vectorize(
-                new DataSource(sourceValue.toString()),
+                dataSource,
                 annotation.modelType()
             );
         } catch (Exception e) {
-            log.error("Embedding generation failed", e);
+            log.error("Embedding generation failed for value: {}, data type: {}, model type: {}",
+            sourceValue, annotation.dataType(), annotation.modelType(), e);
             throw new DataProcessingException("Embedding generation failed", e);
         }
     }

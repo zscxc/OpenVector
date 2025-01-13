@@ -1,5 +1,6 @@
 package com.openvector.dbmilvusplus.annotaion;
 
+import com.openvector.modelcore.enums.DataType;
 import com.openvector.modelcore.enums.ModelType;
 
 import java.lang.annotation.ElementType;
@@ -18,6 +19,11 @@ public @interface GenerationVector {
      * 要转换的字段
      */
     String to_name() default "";
+
+    /**
+     * 数据类型
+     */
+    DataType dataType() default DataType.TEXT;
 
     /**
      * 数据类型，默认为 FLOAT_VECTOR

@@ -41,7 +41,7 @@ public class DataSource {
     public DataSource(String valueString) {
         this.content = valueString;
         this.sourceType = detectSourceType(valueString);
-        this.dataType = detectDataType(valueString);
+        this.dataType = DataType.TEXT;
     }
 
     private SourceType detectSourceType(String valueString) {
@@ -50,22 +50,11 @@ public class DataSource {
         return SourceType.FILE;
     }
 
-    private DataType detectDataType(String valueString) {
-        if (isImageFile(valueString)) return DataType.IMAGE;
-        if (isTextFile(valueString)) return DataType.TEXT;
-        return DataType.TEXT;
-    }
-
-    private boolean isImageFile(String valueString) {
-        String[] imageExtensions = {".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp"};
-        return Arrays.stream(imageExtensions)
-            .anyMatch(valueString.toLowerCase()::endsWith);
-    }
-
-    private boolean isTextFile(String valueString) {
-        String[] textExtensions = {".txt", ".md", ".csv", ".json", ".xml", ".html"};
-        return Arrays.stream(textExtensions)
-            .anyMatch(valueString.toLowerCase()::endsWith);
+    // 支持显式指定 DataType 的构造方法
+    public DataSource(String content, DataType dataType) {
+        this.content = content;
+        this.sourceType = detectSourceType(content);
+        this.dataType = dataType;
     }
     
     /**
