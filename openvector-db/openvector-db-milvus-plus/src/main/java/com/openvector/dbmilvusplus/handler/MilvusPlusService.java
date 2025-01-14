@@ -1,19 +1,24 @@
 package com.openvector.dbmilvusplus.handler;
 
 import com.openvector.dbmilvusplus.annotaion.GenerationVector;
+import com.openvector.dbmilvusplus.weapper.OpenVectorWrapper;
 import com.openvector.modelcore.DataSource;
 import com.openvector.modelcore.coordinator.ModelCoordinator;
 import com.openvector.modelcore.enums.DataType;
 import com.openvector.modelcore.exception.DataProcessingException;
+import io.milvus.v2.client.MilvusClientV2;
 import io.milvus.v2.service.vector.response.DeleteResp;
 import io.milvus.v2.service.vector.response.InsertResp;
 import io.milvus.v2.service.vector.response.UpsertResp;
+import lombok.Data;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.dromara.milvus.plus.annotation.MilvusCollection;
 import org.dromara.milvus.plus.core.conditions.LambdaQueryWrapper;
 import org.dromara.milvus.plus.core.mapper.BaseMilvusMapper;
 import org.dromara.milvus.plus.model.vo.MilvusResp;
 import org.dromara.milvus.plus.model.vo.MilvusResult;
+import org.dromara.milvus.plus.util.MilvusSpringUtils;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -29,23 +34,74 @@ import java.util.stream.Collectors;
 public class MilvusPlusService<T> {
 
     // 缓存反射信息，提高性能
-    private static final Map<Class<?>, List<VectorGenerationMetadata>> VECTOR_GENERATION_CACHE = new ConcurrentHashMap<>();
+    public static final Map<Class<?>, List<VectorGenerationMetadata>> VECTOR_GENERATION_CACHE = new ConcurrentHashMap<>();
 
     // 向量生成元数据
-    private static class VectorGenerationMetadata {
+    @Data
+    public static class VectorGenerationMetadata {
+        private ModelCoordinator modelCoordinator;
         Field sourceField;
         Field targetField;
         GenerationVector annotation;
 
-        VectorGenerationMetadata(Field sourceField, Field targetField, GenerationVector annotation) {
+        VectorGenerationMetadata(ModelCoordinator modelCoordinator,Field sourceField, Field targetField, GenerationVector annotation) {
+            this.modelCoordinator = modelCoordinator;
             this.sourceField = sourceField;
             this.targetField = targetField;
             this.annotation = annotation;
+        }
+
+        public List<Float> generateEmbedding(Object sourceValue){
+            try {
+                DataSource dataSource;
+                if (sourceValue == null) {
+                    throw new IllegalArgumentException("Source value cannot be null");
+                }
+                // 使用注解中指定的数据类型创建 DataSource
+                dataSource = new DataSource(sourceValue.toString()) {
+                    @Override
+                    public DataType getDataType() {
+                        return annotation.dataType();
+                    }
+                };
+                return modelCoordinator.vectorize(
+                        dataSource,
+                        annotation.modelType()
+                );
+            } catch (Exception e) {
+                // 返回空向量或抛出异常，取决于具体需求
+                return Collections.emptyList();
+            }
         }
     }
 
     private final BaseMilvusMapper<T> baseMilvusMapper;
     private final ModelCoordinator modelCoordinator;
+
+
+    private BaseMilvusMapper<T> createBaseMapper(Class<T> entityType) {
+        return new BaseMilvusMapper() {
+            public MilvusClientV2 getClient() {
+                return MilvusSpringUtils.getBean(MilvusClientV2.class);
+            }
+
+            public Class<T> getEntityType() {
+                return entityType;
+            }
+
+            public OpenVectorWrapper<T> queryWrapper() {
+                Class<T> entityType = getEntityType();
+                MilvusCollection collectionAnnotation = entityType.getAnnotation(MilvusCollection.class);
+                return new OpenVectorWrapper<>(getClient(), collectionAnnotation.name(), entityType);
+            }
+        };
+    }
+
+
+
+    public OpenVectorWrapper<T> queryWrapper() {
+        return (OpenVectorWrapper<T>) baseMilvusMapper.queryWrapper();
+    }
 
     public MilvusPlusService(BaseMilvusMapper<T> baseMilvusMapper) {
         this(baseMilvusMapper, new ModelCoordinator());
@@ -84,9 +140,7 @@ public class MilvusPlusService<T> {
         return baseMilvusMapper.getById(id);
     }
 
-    public LambdaQueryWrapper<T> queryWrapper() {
-        return baseMilvusMapper.queryWrapper();
-    }
+
 
     public MilvusResp<List<MilvusResult<T>>> query(Consumer<LambdaQueryWrapper<T>> consumer) {
         LambdaQueryWrapper<T> wrapper = queryWrapper();
@@ -126,7 +180,7 @@ public class MilvusPlusService<T> {
                     sourceField.setAccessible(true);
                     targetField.setAccessible(true);
 
-                    metadata.add(new VectorGenerationMetadata(sourceField, targetField, annotation));
+                    metadata.add(new VectorGenerationMetadata(modelCoordinator,sourceField, targetField, annotation));
                 } catch (NoSuchFieldException e) {
                     log.warn("No target field found for {}", sourceField.getName(), e);
                 }
