@@ -20,6 +20,11 @@
             <version>1.0.0</version>
         </dependency>
         <dependency>
+            <groupId>com.openvector</groupId>
+            <artifactId>openvector-db-milvus-plus</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
             <groupId>com.openvector.jdlib</groupId>
             <artifactId>openvector-face</artifactId>
             <version>1.0.0</version>

@@ -1,38 +1,28 @@
 package com.openvector.dbmilvusplus.handler;
 
+
 import com.openvector.dbmilvusplus.annotaion.GenerationVector;
-import com.openvector.dbmilvusplus.weapper.OpenVectorWrapper;
+import com.openvector.dbmilvusplus.wrapper.OpenVectorWrapper;
 import com.openvector.modelcore.DataSource;
 import com.openvector.modelcore.coordinator.ModelCoordinator;
 import com.openvector.modelcore.enums.DataType;
-import com.openvector.modelcore.exception.DataProcessingException;
 import io.milvus.v2.client.MilvusClientV2;
-import io.milvus.v2.service.vector.response.DeleteResp;
-import io.milvus.v2.service.vector.response.InsertResp;
-import io.milvus.v2.service.vector.response.UpsertResp;
 import lombok.Data;
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
-import org.dromara.milvus.plus.annotation.MilvusCollection;
-import org.dromara.milvus.plus.core.conditions.LambdaQueryWrapper;
 import org.dromara.milvus.plus.core.mapper.BaseMilvusMapper;
 import org.dromara.milvus.plus.model.vo.MilvusResp;
 import org.dromara.milvus.plus.model.vo.MilvusResult;
 import org.dromara.milvus.plus.util.MilvusSpringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-/**
- * @author cxc
- */
-@Slf4j
-public class MilvusPlusService<T> {
-
+public class OpenVectorService<T>  {
+    private static final Logger logger = LoggerFactory.getLogger(OpenVectorService.class);
     // 缓存反射信息，提高性能
     public static final Map<Class<?>, List<VectorGenerationMetadata>> VECTOR_GENERATION_CACHE = new ConcurrentHashMap<>();
 
@@ -45,12 +35,11 @@ public class MilvusPlusService<T> {
         GenerationVector annotation;
 
         VectorGenerationMetadata(ModelCoordinator modelCoordinator,Field sourceField, Field targetField, GenerationVector annotation) {
-            this.modelCoordinator = modelCoordinator;
+            this.modelCoordinator=modelCoordinator;
             this.sourceField = sourceField;
             this.targetField = targetField;
             this.annotation = annotation;
         }
-
         public List<Float> generateEmbedding(Object sourceValue){
             try {
                 DataSource dataSource;
@@ -69,84 +58,65 @@ public class MilvusPlusService<T> {
                         annotation.modelType()
                 );
             } catch (Exception e) {
+                logger.error("Embedding generation failed", e);
                 // 返回空向量或抛出异常，取决于具体需求
                 return Collections.emptyList();
             }
         }
     }
 
-    private final BaseMilvusMapper<T> baseMilvusMapper;
+    private final BaseMilvusMapper<T> baseVectoRexMapper;
+
     private final ModelCoordinator modelCoordinator;
 
+    public OpenVectorService(Class<T> entityType) {
+        this(entityType, new ModelCoordinator());
+    }
+
+    public OpenVectorService(Class<T> entityType, ModelCoordinator modelCoordinator) {
+        this.modelCoordinator = modelCoordinator;
+        this.baseVectoRexMapper = createBaseMapper(entityType);
+    }
 
     private BaseMilvusMapper<T> createBaseMapper(Class<T> entityType) {
-        return new BaseMilvusMapper() {
+        return new BaseMilvusMapper<T>() {
+            @Override
             public MilvusClientV2 getClient() {
                 return MilvusSpringUtils.getBean(MilvusClientV2.class);
             }
-
-            public Class<T> getEntityType() {
-                return entityType;
-            }
-
+            @Override
             public OpenVectorWrapper<T> queryWrapper() {
-                Class<T> entityType = getEntityType();
-                MilvusCollection collectionAnnotation = entityType.getAnnotation(MilvusCollection.class);
-                return new OpenVectorWrapper<>(getClient(), collectionAnnotation.name(), entityType);
+                return (OpenVectorWrapper<T>) lambda(entityType,new OpenVectorWrapper());
             }
         };
     }
 
-
-
-    public OpenVectorWrapper<T> queryWrapper() {
-        return (OpenVectorWrapper<T>) baseMilvusMapper.queryWrapper();
-    }
-
-    public MilvusPlusService(BaseMilvusMapper<T> baseMilvusMapper) {
-        this(baseMilvusMapper, new ModelCoordinator());
-    }
-
-    public MilvusPlusService(BaseMilvusMapper<T> baseMilvusMapper, ModelCoordinator modelCoordinator) {
-        this.baseMilvusMapper = baseMilvusMapper;
-        this.modelCoordinator = modelCoordinator;
-    }
-
-    public MilvusResp<InsertResp> insert(T entity) throws DataProcessingException {
+    public void insert(T entity) {
         T processedEntity = processVectorGeneration(entity);
-        return baseMilvusMapper.insert(processedEntity);
+        baseVectoRexMapper.insert(processedEntity);
     }
-
-    public MilvusResp<InsertResp> insert(Collection<T> entities) {
+    public void insert(Collection<T> entities) {
         Collection<T> processedEntities = processVectorGenerations(entities);
-        return baseMilvusMapper.insert(processedEntities);
+        baseVectoRexMapper.insert(processedEntities);
     }
-
-    public MilvusResp<UpsertResp> updateById(T entity) throws DataProcessingException {
+    public void updateById(T entity) {
         T processedEntity = processVectorGeneration(entity);
-        return baseMilvusMapper.updateById(processedEntity);
+        baseVectoRexMapper.updateById(processedEntity);
     }
-
-    public MilvusResp<UpsertResp> updateById(Collection<T> entities) {
+    public void updateById(Collection<T> entities) {
         Collection<T> processedEntities = processVectorGenerations(entities);
-        return baseMilvusMapper.updateById(processedEntities);
+        baseVectoRexMapper.updateById(processedEntities);
     }
-
-    public MilvusResp<DeleteResp> removeById(Serializable id) {
-        return baseMilvusMapper.removeById(id);
+    public void removeById(Serializable id) {
+        baseVectoRexMapper.removeById(id);
     }
-
     public MilvusResp<List<MilvusResult<T>>> getById(Serializable id) {
-        return baseMilvusMapper.getById(id);
+        return baseVectoRexMapper.getById(id);
+    }
+    public OpenVectorWrapper<T> queryWrapper() {
+        return (OpenVectorWrapper<T>) baseVectoRexMapper.queryWrapper();
     }
 
-
-
-    public MilvusResp<List<MilvusResult<T>>> query(Consumer<LambdaQueryWrapper<T>> consumer) {
-        LambdaQueryWrapper<T> wrapper = queryWrapper();
-        consumer.accept(wrapper);
-        return wrapper.query();
-    }
 
     /**
      * 获取类的向量生成元数据（使用缓存）
@@ -156,6 +126,7 @@ public class MilvusPlusService<T> {
     private List<VectorGenerationMetadata> getVectorGenerationMetadata(Class<T> entityClass) {
         return VECTOR_GENERATION_CACHE.computeIfAbsent(entityClass, this::computeVectorGenerationMetadata);
     }
+
 
     /**
      * 计算向量生成元数据
@@ -182,13 +153,14 @@ public class MilvusPlusService<T> {
 
                     metadata.add(new VectorGenerationMetadata(modelCoordinator,sourceField, targetField, annotation));
                 } catch (NoSuchFieldException e) {
-                    log.warn("No target field found for {}", sourceField.getName(), e);
+                    logger.warn("No target field found for {}", sourceField.getName(), e);
                 }
             }
         }
 
         return metadata;
     }
+
 
     /**
      * 确定目标字段名
@@ -203,13 +175,14 @@ public class MilvusPlusService<T> {
             : annotation.to_name();
     }
 
-    /**
+
+     /**
      * 处理单个实体的向量生成
-     *
+      *
      * @param entity 实体对象
      * @return 处理后的实体
      */
-    private T processVectorGeneration(T entity) throws DataProcessingException {
+    private T processVectorGeneration(T entity) {
         // 获取类的向量生成元数据
         List<VectorGenerationMetadata> metadata = getVectorGenerationMetadata((Class<T>) entity.getClass());
 
@@ -225,26 +198,12 @@ public class MilvusPlusService<T> {
                     vectorMeta.targetField.set(entity, embedding);
                 }
             } catch (Exception e) {
-                log.error("Vector generation failed for field {}",
+                logger.error("Vector generation failed for field {}",
                     vectorMeta.sourceField.getName(), e);
-                throw new DataProcessingException("Vector generation failed", e);
             }
         }
 
         return entity;
-    }
-
-    /**
-     * 批量处理实体的向量生成
-     *
-     * @param entities 实体集合
-     * @return 处理后的实体集合
-     */
-    @SneakyThrows
-    private Collection<T> processVectorGenerations(Collection<T> entities) {
-        return entities.stream()
-            .map(this::processVectorGeneration)
-            .collect(Collectors.toList());
     }
 
     /**
@@ -254,7 +213,7 @@ public class MilvusPlusService<T> {
      * @param annotation 注解
      * @return 向量
      */
-    private List<Float> generateEmbedding(Object sourceValue, GenerationVector annotation) throws DataProcessingException {
+    private List<Float> generateEmbedding(Object sourceValue, GenerationVector annotation) {
         try {
             DataSource dataSource;
             if (sourceValue == null) {
@@ -272,11 +231,23 @@ public class MilvusPlusService<T> {
                 annotation.modelType()
             );
         } catch (Exception e) {
-            log.error("Embedding generation failed for value: {}, data type: {}, model type: {}",
-            sourceValue, annotation.dataType(), annotation.modelType(), e);
-            throw new DataProcessingException("Embedding generation failed", e);
+            logger.error("Embedding generation failed", e);
+            // 返回空向量或抛出异常，取决于具体需求
+            return Collections.emptyList();
         }
     }
 
+
+    /**
+     * 批量处理向量生成
+     *
+     * @param entities 实体集合
+     * @return 处理后的实体集合
+     */
+    private Collection<T> processVectorGenerations(Collection<T> entities) {
+        return entities.stream()
+            .map(this::processVectorGeneration)
+            .collect(Collectors.toList());
+    }
 
 }

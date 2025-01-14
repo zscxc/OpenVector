@@ -4,3 +4,8 @@ vectorex:
   enable: true
   packages:
     - com.openvector.milvusplus.modeltest.model
+milvus:
+  uri: http://localhost:19530
+  enable: true
+  packages:
+    - com.openvector.milvusplus.modeltest.model
