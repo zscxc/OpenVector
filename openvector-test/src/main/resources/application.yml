@@ -1,0 +1,6 @@
+server:
+  port: 8010
+vectorex:
+  enable: true
+  packages:
+    - com.openvector.milvusplus.modeltest.model

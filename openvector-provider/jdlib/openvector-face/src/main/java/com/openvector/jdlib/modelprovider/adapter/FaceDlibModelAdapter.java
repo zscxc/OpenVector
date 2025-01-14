@@ -7,6 +7,7 @@ import com.openvector.modelcore.enums.DataType;
 import com.openvector.modelcore.enums.ModelType;
 import com.openvector.modelcore.exception.DataProcessingException;
 import com.openvector.modelcore.interfaces.ModelProvider;
+import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -23,6 +24,7 @@ import java.util.List;
 /**
  * @author cxc
  */
+@Service
 public class FaceDlibModelAdapter implements ModelProvider {
 
 

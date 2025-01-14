@@ -1,15 +1,14 @@
 package com.openvector.modelcore.coordinator;
 
 import com.openvector.modelcore.DataSource;
-import com.openvector.modelcore.enums.DataType;
 import com.openvector.modelcore.enums.ModelType;
 import com.openvector.modelcore.exception.DataProcessingException;
 import com.openvector.modelcore.interfaces.ModelProvider;
 import com.openvector.modelcore.interfaces.VectorizeData;
+import com.openvector.modelcore.util.ProviderUtil;
 
 import java.util.List;
-import java.util.ServiceLoader;
-import java.util.stream.StreamSupport;
+import java.util.Map;
 
 /**
  * 模型协调器
@@ -17,15 +16,24 @@ import java.util.stream.StreamSupport;
  *
  * @author cxc
  */
+
+
 public class ModelCoordinator implements VectorizeData {
 
     @Override
     public List<Float> vectorize(DataSource source, ModelType modelType) throws DataProcessingException {
         // 使用Java SPI机制加载模型提供者
-        ServiceLoader<ModelProvider> loader = ServiceLoader.load(ModelProvider.class);
+//        ServiceLoader<ModelProvider> loader = ServiceLoader.load(ModelProvider.class);
 
         // 找到支持特定模型和数据类型的提供者
-        ModelProvider selectedProvider = StreamSupport.stream(loader.spliterator(), false)
+//        Stream<ModelProvider> stream = StreamSupport.stream(loader.spliterator(), false);
+
+        ////上面方式获取不到所有实现类
+
+        Map<String, ModelProvider> providers = ProviderUtil.getModelProviders();
+
+
+        ModelProvider selectedProvider = providers.values().stream()
             .filter(provider -> provider.supports(modelType, source.getDataType()))
             .findFirst()
             .orElseThrow(() -> new DataProcessingException("No suitable model provider found"));

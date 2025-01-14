@@ -16,6 +16,12 @@
             <artifactId>openvector-core</artifactId>
             <version>${revision}</version>
         </dependency>
+        <dependency>
+            <groupId>net.dreamlu</groupId>
+            <artifactId>mica-auto</artifactId>
+            <version>${mica-auto.vaersion}</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
     <build>
         <resources>

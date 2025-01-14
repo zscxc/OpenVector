@@ -10,6 +10,7 @@ import io.github.javpower.vectorexbootstater.mapper.BaseVectoRexMapper;
 import io.github.javpower.vectorexbootstater.util.VectorRexSpringUtils;
 import io.github.javpower.vectorexcore.VectoRexClient;
 import io.github.javpower.vectorexcore.annotation.VectoRexCollection;
+import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,18 +23,44 @@ import java.util.stream.Collectors;
 public class OpenVectorService<T>  {
     private static final Logger logger = LoggerFactory.getLogger(OpenVectorService.class);
     // 缓存反射信息，提高性能
-    private static final Map<Class<?>, List<VectorGenerationMetadata>> VECTOR_GENERATION_CACHE = new ConcurrentHashMap<>();
+    public static final Map<Class<?>, List<VectorGenerationMetadata>> VECTOR_GENERATION_CACHE = new ConcurrentHashMap<>();
 
     // 向量生成元数据
-    private static class VectorGenerationMetadata {
+    @Data
+    public static class VectorGenerationMetadata {
+        private ModelCoordinator modelCoordinator;
         Field sourceField;
         Field targetField;
         GenerationVector annotation;
 
-        VectorGenerationMetadata(Field sourceField, Field targetField, GenerationVector annotation) {
+        VectorGenerationMetadata(ModelCoordinator modelCoordinator,Field sourceField, Field targetField, GenerationVector annotation) {
+            this.modelCoordinator=modelCoordinator;
             this.sourceField = sourceField;
             this.targetField = targetField;
             this.annotation = annotation;
+        }
+        public List<Float> generateEmbedding(Object sourceValue){
+            try {
+                DataSource dataSource;
+                if (sourceValue == null) {
+                    throw new IllegalArgumentException("Source value cannot be null");
+                }
+                // 使用注解中指定的数据类型创建 DataSource
+                dataSource = new DataSource(sourceValue.toString()) {
+                    @Override
+                    public DataType getDataType() {
+                        return annotation.dataType();
+                    }
+                };
+                return modelCoordinator.vectorize(
+                        dataSource,
+                        annotation.modelType()
+                );
+            } catch (Exception e) {
+                logger.error("Embedding generation failed", e);
+                // 返回空向量或抛出异常，取决于具体需求
+                return Collections.emptyList();
+            }
         }
     }
 
@@ -69,23 +96,18 @@ public class OpenVectorService<T>  {
     }
 
     public void insert(T entity) {
-        //todo 判断是否有GenerationVector注解，有的话，自动嵌入向量数据到指定字段
-        // 处理向量生成
         T processedEntity = processVectorGeneration(entity);
         baseVectoRexMapper.insert(processedEntity);
     }
     public void insert(Collection<T> entities) {
-        //todo 判断是否有GenerationVector注解，有的话，自动嵌入向量数据到指定字段
         Collection<T> processedEntities = processVectorGenerations(entities);
         baseVectoRexMapper.insert(processedEntities);
     }
     public void updateById(T entity) {
-        //todo 判断是否有GenerationVector注解，有的话，自动嵌入向量数据到指定字段
         T processedEntity = processVectorGeneration(entity);
         baseVectoRexMapper.updateById(processedEntity);
     }
     public void updateById(Collection<T> entities) {
-        //todo 判断是否有GenerationVector注解，有的话，自动嵌入向量数据到指定字段
         Collection<T> processedEntities = processVectorGenerations(entities);
         baseVectoRexMapper.updateById(processedEntities);
     }
@@ -133,7 +155,7 @@ public class OpenVectorService<T>  {
                     sourceField.setAccessible(true);
                     targetField.setAccessible(true);
 
-                    metadata.add(new VectorGenerationMetadata(sourceField, targetField, annotation));
+                    metadata.add(new VectorGenerationMetadata(modelCoordinator,sourceField, targetField, annotation));
                 } catch (NoSuchFieldException e) {
                     logger.warn("No target field found for {}", sourceField.getName(), e);
                 }
